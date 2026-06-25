@@ -1,120 +1,122 @@
 # agent-team-cli
 
-> 把"8-agent 协作 + 知识同步闸"骨架一键注入任意项目，**同时支持 Claude Code 与 Codex**。
-> 灵感来自 llmwiki 的「概念 / 决策 / 操作 / 参考 / 模板」五分类文档结构。
+[中文](./README.zh-CN.md) | English
 
-## 这是什么
+> One-click injection of "8-agent collaboration + knowledge sync gate" scaffolding into any project, **supporting both Claude Code and Codex**.
+> Inspired by llmwiki's five-category documentation structure: Concepts / Decisions / Operations / References / Templates.
 
-一个独立的 Node CLI。给一个新项目（或既有项目）安装：
+## What is this
 
-- **`docs/` 五分类目录** —— `concepts/`（设计哲学）、`decisions/`（ADR）、`runbooks/`（操作手册）、`references/`（外部资源）、`templates/`（模板与样板），与既有 `requirement/ · api/ · database/ · fixes/ · deploy/` 并列。
-- **`docs/CHANGELOG.md`** —— 知识同步闸的回写入口。
-- **`CLAUDE.md` / `AGENTS.md`** —— 控制层总则，两端同步。
-- **`.claude/agents/*.md`** —— Claude Code 的 8 个 agent 定义。
-- **`.codex/skills/<name>/`** —— Codex 的 8 个 skill 定义（`SKILL.md` + `agents/openai.yaml` + `references/legacy-role.md`）。
+An independent Node CLI that installs into a new (or existing) project:
 
-8 个 agent：`market-analyst` · `product-manager` · `prototype-designer` · `frontend-engineer` · `db-architect` · `backend-engineer` · `qa-engineer` · `devops-engineer`。
+- **`docs/` five-category structure** — `concepts/` (design philosophy), `decisions/` (ADRs), `runbooks/` (operations guides), `references/` (external resources), `templates/` (templates & boilerplates), coexisting with existing `requirement/`, `api/`, `database/`, `fixes/`, `deploy/` directories.
+- **`docs/CHANGELOG.md`** — The sync gate's write-back entry point.
+- **`CLAUDE.md` / `AGENTS.md`** — Control layer manifests, synchronized across both platforms.
+- **`.claude/agents/*.md`** — 8 agent definitions for Claude Code.
+- **`.codex/skills/<name>/`** — 8 skill definitions for Codex (`SKILL.md` + `agents/openai.yaml` + `references/legacy-role.md`).
 
-## 安装
+8 agents: `market-analyst` · `product-manager` · `prototype-designer` · `frontend-engineer` · `db-architect` · `backend-engineer` · `qa-engineer` · `devops-engineer`.
+
+## Installation
 
 ```bash
-# 方式 A：本地链接（开发期推荐）
+# Method A: Local link (recommended for development)
 cd ~/Desktop/agent-team-cli
 npm install
 npm link
 agent-team --help
 
-# 方式 B：直接跑（无需安装）
+# Method B: Direct run (no install needed)
 node ~/Desktop/agent-team-cli/bin/agent-team.mjs --help
 ```
 
-## 命令
+## Commands
 
 ### `agent-team init`
 
-把 `docs/` 五分类骨架 + `CLAUDE.md` / `AGENTS.md` 写进当前目录。**不**触碰 `.claude/agents/` 或 `.codex/skills/`——那是 `stack` 的活儿。
+Writes the `docs/` five-category scaffolding + `CLAUDE.md` / `AGENTS.md` into the current directory. Does **not** touch `.claude/agents/` or `.codex/skills/` — that's `stack`'s job.
 
 ```bash
 cd /path/to/your-project
 agent-team init
-# 已存在文件默认会跳过；想覆写加 --force
+# Existing files are skipped by default; use --force to overwrite
 agent-team init --force
-# 看一下要写什么但不真的写
+# Preview what will be written without actually writing
 agent-team init --dry-run
 ```
 
 ### `agent-team stack`
 
-问你的技术栈（或读 JSON 文件），确认后把答案灌入两端的 agent prompts。
+Asks for your tech stack (or reads from a JSON file), then injects the answers into agent prompts on both platforms.
 
 ```bash
 agent-team stack
-# 跳过交互问答，用文件提供答案
+# Skip interactive prompts and use a file
 agent-team stack --from stack.json
-# 演练一遍但不写
+# Dry run without writing
 agent-team stack --dry-run
 ```
 
-`stack.json` 示例：
+Example `stack.json`:
 
 ```json
 {
   "project_name": "my-app",
-  "description": "面向 SMB 的财税自动化 SaaS",
+  "description": "Tax automation SaaS for SMBs",
   "frontend": "React 18 + TypeScript + TailwindCSS",
   "backend": "Python 3.11 + FastAPI",
   "database": "PostgreSQL 16",
   "cache": "Redis 7",
   "llm": "OpenAI gpt-4o + text-embedding-3-small",
   "auth": "JWT + OAuth2/OIDC SSO",
-  "deploy": "Docker Compose 单机"
+  "deploy": "Docker Compose single-node"
 }
 ```
 
-执行 `stack` 后：
+After running `stack`:
 
-- `CLAUDE.md` / `AGENTS.md` 的「六、技术栈速查」会填上具体栈。
-- 8 个 Claude agent + 8 个 Codex skill 的 prompt 里所有 `{{stack_*}}` 占位符都会被替换。
-- `docs/CHANGELOG.md` 自动追加一行注入记录。
+- `CLAUDE.md` / `AGENTS.md` "Tech Stack Quick Reference" section will be filled with concrete stack details.
+- All `{{stack_*}}` placeholders in the 8 Claude agents + 8 Codex skills prompts will be replaced.
+- `docs/CHANGELOG.md` automatically appends an injection record.
 
 ### `agent-team doctor`
 
-只读检查：目录、关键文件、agent 定义是否齐全。
+Read-only check: verifies directories, key files, and agent definitions are complete.
 
 ```bash
 agent-team doctor
 ```
 
-## 典型流程
+## Typical Workflow
 
 ```bash
-# 1. 新项目脚手架
+# 1. New project scaffolding
 mkdir my-new-project && cd $_
 git init
 
-# 2. 装结构
+# 2. Install structure
 agent-team init
 
-# 3. 把技术栈灌入 prompts
+# 3. Inject tech stack into prompts
 agent-team stack
-# 选择前端 / 后端 / 数据库 / 缓存 / LLM / 认证 / 部署 → 确认 → 写入
+# Select frontend / backend / database / cache / LLM / auth / deploy → confirm → write
 
-# 4. 验证
+# 4. Verify
 agent-team doctor
 
-# 5. 在 Claude Code / Codex 里直接用
+# 5. Use directly in Claude Code / Codex
 # /market-analyst   (Claude Code)
 # $market-analyst   (Codex)
 ```
 
-## 设计原则
+## Design Principles
 
-1. **不替换、不破坏**：`init` 默认跳过已存在的文件；用 `--force` 才覆写。
-2. **两端同步**：`CLAUDE.md` / `AGENTS.md`、`.claude/agents/` / `.codex/skills/` 内容一致，确保 Claude Code 与 Codex 行为一致。
-3. **占位符可二次定制**：`{{project_name}}` / `{{stack_*}}` / `{{description}}` 是模板里的变量，`stack` 命令负责填充；你也可以手动改模板文件后重新 `stack`。
-4. **知识同步闸内建**：每个 agent prompt 都内置"收尾过同步闸"的 checklist；CHANGELOG 是其唯一汇总入口。
+1. **Non-destructive**: `init` skips existing files by default; use `--force` to overwrite.
+2. **Cross-platform sync**: `CLAUDE.md` / `AGENTS.md`, `.claude/agents/` / `.codex/skills/` have identical content to ensure consistent behavior across Claude Code and Codex.
+3. **Customizable placeholders**: `{{project_name}}` / `{{stack_*}}` / `{{description}}` are template variables filled by the `stack` command; you can also manually edit templates and re-run `stack`.
+4. **Built-in sync gate**: Every agent prompt includes an end-of-task "sync gate checklist"; CHANGELOG is the single aggregation entry point.
 
-## 目录结构
+## Directory Structure
 
 ```
 agent-team-cli/
@@ -126,11 +128,11 @@ agent-team-cli/
 │   │   ├── stack.mjs
 │   │   └── doctor.mjs
 │   └── lib/
-│       ├── fs-util.mjs         # 文件读写、模板遍历
-│       └── template.mjs        # {{var}} 渲染（含 {{#if}}）
+│       ├── fs-util.mjs         # File read/write, template traversal
+│       └── template.mjs        # {{var}} rendering (with {{#if}})
 ├── templates/
-│   ├── CLAUDE.md               # Claude Code 控制层模板
-│   ├── AGENTS.md               # Codex 控制层模板
+│   ├── CLAUDE.md               # Claude Code control layer template
+│   ├── AGENTS.md               # Codex control layer template
 │   ├── docs/
 │   │   ├── CHANGELOG.md
 │   │   ├── concepts/README.md
@@ -138,17 +140,19 @@ agent-team-cli/
 │   │   ├── runbooks/README.md
 │   │   ├── references/README.md
 │   │   └── templates/{README.md, api-contract-template.yaml, adr-template.md, runbook-template.md}
-│   ├── claude/agents/          # 8 个 .md
-│   └── codex/skills/<name>/    # 每个 skill 3 个文件
+│   ├── claude/agents/          # 8 .md files
+│   └── codex/skills/<name>/    # 3 files per skill
 └── package.json
 ```
 
-## 后续可扩展
+## Future Extensions
 
-- `agent-team upgrade` —— 把模板的最新版本拉进既有项目（diff + apply）。
-- `agent-team add-agent <name>` —— 加入团队第 9 个 / 第 10 个 agent。
-- 切换不同的 stack profile（如不同的客户项目用同一套结构、不同的栈）。
+- `agent-team upgrade` — Pull latest template versions into existing projects (diff + apply).
+- `agent-team add-agent <name>` — Add a 9th or 10th agent to the team.
+- Switch between different stack profiles (e.g., different customer projects with the same structure but different stacks).
 
 ## License
 
 MIT
+
+
