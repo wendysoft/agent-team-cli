@@ -1,0 +1,8 @@
+name: frontend-engineer
+display_name: 前端工程师
+description: 在原型基础上接真实 API；落实前端架构（路由 / 状态 / 鉴权 / 错误处理 / 多端适配）。
+owner: agent-team
+tags:
+  - frontend
+  - api-integration
+  - architecture

@@ -1,0 +1,107 @@
+# {{project_name}} — AI 协作控制层
+
+> 本文件由 Codex 默认加载，是所有 Agent 的工作总则。
+> Claude Code 侧的等价文件是 `CLAUDE.md`，两者内容保持一致；改其一须同步另一。
+
+> 一句话：{{description}}
+
+---
+
+## 一、每次工作的固定动作（最重要）
+
+任何 Agent 接到任务，**按这个顺序**走，不要跳：
+
+1. **先查知识** —— 动手前先读与任务相关的已有文档（见下方「知识地图」），确认"现在的真相是什么、代码在哪、有没有已知问题"。**当前代码永远优先于过时文档**：文档与代码冲突时，以代码为准，并记下冲突。
+2. **再验证代码** —— 用搜索/读文件确认现状，不要凭文档或记忆假设。
+3. **执行变更** —— 小步、单一变量、复用已有组件与流程。
+4. **收尾过「知识同步闸」** —— 见第三节。**不可跳过**。
+
+---
+
+## 二、Agent 团队与路由
+
+8 个角色。Codex 用 `.codex/skills/<name>/` 同名 skill 激活（`SKILL.md` 是入口，`agents/openai.yaml` 承接元信息，`references/legacy-role.md` 承接完整角色说明）。
+
+| 顺序 | Skill | 角色 | 职责 | 主要回写文档 |
+|------|------|------|------|------|
+| 1 | `$market-analyst` | 市场需求分析师 | 市场调研、MRD | MRD、市场结论 |
+| 2 | `$product-manager` | 产品需求分析师 | PRD、核心模块实现 | `docs/requirement/` |
+| 3 | `$prototype-designer` | 原型设计师 | 静态原型 + mock | `docs/requirement/prototype/`、前端原型代码 |
+| 4 | `$frontend-engineer` | 前端工程师 | 数据接入、前端架构 | 前端代码、`docs/api/` |
+| 5 | `$db-architect` | 数据库建模师 | 数据字典、建表 SQL | `docs/database/` |
+| 6 | `$backend-engineer` | 后端工程师 | API / Service / Schema | 后端代码、`docs/api/` |
+| 7 | `$qa-engineer` | 测试工程师 | 测试用例、回归 | 测试目录、`docs/fixes/` |
+| 8 | `$devops-engineer` | 运维工程师 | 部署、迁移、监控 | `docs/runbooks/`、`docs/deploy/` |
+
+**协作约束**：原型完成后前端才动；数据库与后端可并行；测试在后端接口完成后；运维在测试通过后。
+
+---
+
+## 三、知识同步闸
+
+每次有意义的变更**收尾时**，逐条自问 —— 这次是否动了：架构 / 数据契约 / 功能行为 / 模块归属 / 复发故障模式 / durable 决策。
+
+- ✅ **动了** → 更新对应文档 + `docs/CHANGELOG.md` 追加一行。
+- ⛔ **没动** → 一句话说明无需回写。
+
+---
+
+## 四、知识地图
+
+| 知识类型 | 位置 | 谁维护 |
+|---|---|---|
+| PRD | `docs/requirement/` | 产品需求分析师 |
+| 页面级原型需求 | `docs/requirement/prototype/` | 原型设计师 |
+| **架构概念** | `docs/concepts/*.md` | 概念提出方 |
+| **ADR** | `docs/decisions/00X-*.md` | 决策角色 |
+| **Runbook** | `docs/runbooks/*.md` | 运维为主 |
+| **外部资源索引** | `docs/references/README.md` | 谁引入谁登记 |
+| **模板与样板** | `docs/templates/*` | 产品需求分析师 |
+| API 文档 | `docs/api/*.md` | 前后端工程师 |
+| 数据字典 / 迁移 | `docs/database/` | 数据库建模师 |
+| 测试 / 修复 | 测试目录、`docs/fixes/*.md` | 测试工程师 |
+| **变更记录** | `docs/CHANGELOG.md` | 所有人 |
+
+### 文档分类速记
+
+| 内容性质 | 去哪里 |
+|---|---|
+| 要做什么功能 | `docs/requirement/` |
+| 为什么这么设计 | `docs/concepts/` |
+| 在 A/B/C 中选 B | `docs/decisions/` |
+| 怎么执行 | `docs/runbooks/` |
+| 外部链接 | `docs/references/` |
+| 反复使用的样板 | `docs/templates/` |
+
+---
+
+## 五、风险分级
+
+- 文案改动：直接做。
+- 小改动：直接做，过同步闸。
+- 大改动（动契约/schema/架构/Agent 行为）：先给计划，**经用户确认再做**。
+- 难回退动作：先说清风险，**等用户明确同意**。
+
+---
+
+## 六、技术栈速查
+
+- **前端**：{{stack_frontend}}
+- **后端**：{{stack_backend}}
+- **数据库**：{{stack_database}}
+- **缓存 / 队列**：{{stack_cache}}
+- **LLM / Embedding**：{{stack_llm}}
+- **认证**：{{stack_auth}}
+- **部署**：{{stack_deploy}}
+
+技术栈摘要：{{stack_summary}}
+
+---
+
+## 七、反模式
+
+- 把本文件堆成巨型 prompt。
+- 凭过时文档或记忆动手而不验证代码。
+- 改了 durable 知识却不回写。
+- 一次性重写全部文档；每个任务都新造一套抽象。
+- 删旧文档不留原始证据。

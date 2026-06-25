@@ -1,0 +1,38 @@
+{
+  "name": "agent-team-cli",
+  "version": "0.1.0",
+  "description": "Bootstrap an 8-agent collaborative team (PM / Prototype / FE / DB / BE / QA / DevOps / Market Analyst) into any project. Generates docs/ taxonomy, knowledge-sync-gate workflow, and dual-CLI agent prompts (Claude Code + Codex).",
+  "type": "module",
+  "bin": {
+    "agent-team": "./bin/agent-team.mjs"
+  },
+  "scripts": {
+    "start": "node bin/agent-team.mjs",
+    "test": "node --test test/"
+  },
+  "keywords": [
+    "claude-code",
+    "codex",
+    "agents",
+    "scaffold",
+    "knowledge-base",
+    "adr",
+    "runbook"
+  ],
+  "author": "agent-team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "@inquirer/prompts": "^5.3.8",
+    "kleur": "^4.1.5"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "templates/",
+    "README.md"
+  ]
+}

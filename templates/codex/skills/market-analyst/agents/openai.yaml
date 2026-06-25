@@ -1,0 +1,8 @@
+name: market-analyst
+display_name: 市场需求分析师
+description: 出门做市场调研、竞品分析、用户画像，输出 MRD。在产品需求分析师启动 PRD 前先跑这一步。
+owner: agent-team
+tags:
+  - research
+  - mrd
+  - competitive-analysis

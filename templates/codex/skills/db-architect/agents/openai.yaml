@@ -1,0 +1,8 @@
+name: db-architect
+display_name: 数据库建模师
+description: 数据字典、ER 图、迁移脚本、索引设计、扩展选型。
+owner: agent-team
+tags:
+  - database
+  - schema
+  - migration

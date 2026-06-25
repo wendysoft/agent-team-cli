@@ -1,0 +1,8 @@
+name: devops-engineer
+display_name: 运维工程师
+description: 部署、CI/CD、监控、备份、应急；为每个可重复操作写 Runbook；为每个部署架构决策写 ADR。
+owner: agent-team
+tags:
+  - devops
+  - deployment
+  - runbook

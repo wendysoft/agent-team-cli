@@ -1,0 +1,84 @@
+# API 契约模板（agent-team 标准）
+#
+# 用途：原型设计师交付页面契约时、后端工程师定接口时、前端工程师接入时，
+#       三方共用这一份 YAML 作为单一事实源。变更走 docs/CHANGELOG.md 留痕。
+#
+# 命名：docs/api/<domain>-<resource>.yaml，例如 docs/api/knowledge-search.yaml
+# 同步：变更后必须更新 backend/OPEN_API.md 中的对应章节。
+
+meta:
+  name: <资源名，kebab-case，如 knowledge-search>
+  version: v1                         # 破坏式变更升 v2
+  owner: <负责的后端工程师 / Agent>
+  status: draft | stable | deprecated
+  last-updated: YYYY-MM-DD
+  related-docs:
+    - prd: docs/requirement/prd-07-api.html
+    - module: docs/requirement/module-XX-XXX.html
+    - decisions: docs/decisions/00X-XXX.md
+    - prototype: docs/requirement/prototype/XXX.html
+
+endpoint:
+  method: GET | POST | PUT | DELETE | PATCH
+  path: /api/<domain>/<resource>
+  auth: required | optional | none    # JWT
+  rate-limit: <如 60/min/user，无则写 none>
+
+request:
+  query:                              # GET 参数 / 列表场景
+    - name: keyword
+      type: string
+      required: false
+      description: 检索关键词
+      example: 出海营销
+  body:                               # POST/PUT 入参
+    schema:
+      type: object
+      required: [field_a]
+      properties:
+        field_a:
+          type: string
+          description: <字段含义>
+          example: <示例值>
+
+response:
+  success:
+    status: 200
+    schema:
+      type: object
+      properties:
+        code: { type: integer, example: 0 }
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/<Entity>"
+            total: { type: integer }
+        message: { type: string, example: ok }
+  errors:                             # 业务错误码统一在此声明
+    - code: 40001
+      http: 400
+      message: 参数校验失败
+    - code: 40101
+      http: 401
+      message: 未登录或 token 过期
+    - code: 50001
+      http: 500
+      message: 服务内部错误（向量服务异常）
+
+components:
+  schemas:
+    <Entity>:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        created_at: { type: string, format: date-time }
+
+# === 协作约定 ===
+# 1. 任何字段语义、类型、必填变更 → 升小版本（v1.1）并在 docs/CHANGELOG.md 写一行
+# 2. 破坏式变更（删字段、改语义、改路径）→ 升大版本（v2），旧版本标 deprecated 至少 1 个迭代
+# 3. 前端 mock（frontend/web/src/mocks/）和后端实现必须与本契约一致；不一致以本契约为准
+# 4. 错误码 4xxxx = 客户端错误，5xxxx = 服务端错误；新错误码必须先加进本文件再实现

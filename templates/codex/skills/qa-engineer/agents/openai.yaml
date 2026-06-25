@@ -1,0 +1,8 @@
+name: qa-engineer
+display_name: 测试工程师
+description: 验收标准转测试用例；维护回归集；做"文档 vs 代码"一致性 lint；缺陷复盘。
+owner: agent-team
+tags:
+  - testing
+  - regression
+  - quality

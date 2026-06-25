@@ -1,0 +1,8 @@
+name: product-manager
+display_name: 产品需求分析师
+description: 把 MRD 翻译成可执行的 PRD 与模块实现说明。每页 PRD 要能让原型/前端/后端/数据库/测试直接动手。
+owner: agent-team
+tags:
+  - prd
+  - product
+  - requirements

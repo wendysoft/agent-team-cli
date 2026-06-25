@@ -1,0 +1,8 @@
+name: backend-engineer
+display_name: 后端工程师
+description: 实现 API、Service、Schema；维护 API 契约、错误码、SSE/WebSocket 协议。
+owner: agent-team
+tags:
+  - backend
+  - api
+  - service

@@ -1,0 +1,8 @@
+name: prototype-designer
+display_name: 原型设计师
+description: 用前端框架代码 + mock 数据交付可点击原型；每页一份 7 节功能契约。
+owner: agent-team
+tags:
+  - prototype
+  - ui
+  - mock
